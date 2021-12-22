@@ -180,13 +180,16 @@ import unittest
 
 
 class TestClass(unittest.TestCase):
-    def assertIO(self, input, output):
-        stdout, stdin = sys.stdout, sys.stdin
-        sys.stdout, sys.stdin = StringIO(), StringIO(input)
+    @patch("sys.stdin.readline")
+    def assertIO(self, input, output, patches):
+        stdout = sys.stdout
+        sys.stdout= StringIO()
+        inputs = input.splitlines()
+        patches.side_effect = inputs
         resolve()
         sys.stdout.seek(0)
         out = sys.stdout.read()[:-1]
-        sys.stdout, sys.stdin = stdout, stdin
+        sys.stdout = stdout,
         self.assertEqual(out, output)
 
 `;
